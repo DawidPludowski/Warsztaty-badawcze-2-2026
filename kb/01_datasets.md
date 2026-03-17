@@ -73,9 +73,67 @@
 
 ### FunnyBirds
 
-*Note: This is a particularly interesting dataset for us, as it allows us to generate any relation between concepts synthetically*.
-
 **Link**: [FunnyBirds: A Synthetic Vision Dataset for a Part-Based Analysis of Explainable AI Methods](https://openaccess.thecvf.com/content/ICCV2023/html/Hesse_FunnyBirds_A_Synthetic_Vision_Dataset_for_a_Part-Based_Analysis_of_ICCV_2023_paper.html)
+
+FunnyBirds is a **synthetic computer vision dataset** designed specifically for the evaluation of explainable AI methods. The dataset contains artificially generated bird species composed of several **semantic parts - concepts** such as beaks, wings, eyes, feet, and tails. Each bird class is a unique combination of these parts.
+Unlike most real-world datasets, FunnyBirds allows **controlled semantic interventions**, such as removing individual parts of an object, which enables the estimation of the **true importance of each concept** for model predictions. This makes the dataset particularly suitable for studying **concept-based explanations and the faithfulness of XAI methods**.
+
+
+#### Volume metrics
+
+- **Number of images**: 50 500  
+- **Training images**: 50 000  
+- **Test images**: 500  
+- **Number of classes**: 50 synthetic bird species  
+- **Number of concepts**: 5 parts per image  
+
+
+#### Concepts available
+
+Each image contains the following **five parts**: beak, wings, eyes, feet and tail. 
+Each concept has multiple variants:
+
+- **4 beak types**
+- **3 eye types**
+- **4 feet types**
+- **9 tail types**
+- **6 wing types**
+
+These variants are **created manually using fixed geometric shapes and colors**. This makes each element clear and easy to distinguish, with a well-defined meaning.
+
+Bird classes are created by **combining these predefined concept variants**, resulting in a large space of possible bird configurations. From the total **2 592 possible combinations**, **50 classes are randomly sampled** to build the final dataset.
+
+#### Why is it relevant?
+
+FunnyBirds is useful for concept-based explainability research because:
+
+- the concepts represent parts of an object that people can easily understand
+- you can change or remove parts (for example, remove a beak)
+- it is possible to know how important each concept really is
+- the data is fully controlled during creation
+- it avoids many problems that occur in real-world datasets
+
+**Hypotheses to be evaluated:**
+
+- Do XAI methods correctly identify which object parts are truly important?
+- Can explanations correctly rank how important each part is (e.g., beak vs wings)?
+- Do different neural network types produce different quality explanations?
+
+#### Known limitations
+
+1. The dataset is synthetic, so it does not include all the complexity of real-world images.
+2. The objects are simple and have only five concepts, which limits variety.
+3. Models trained on FunnyBirds may not work as well on real-world data.
+
+However, these limitations are intentional, since the goal is to create a **controlled environment for analyzing explainability methods**.
+
+#### Related papers
+https://arxiv.org/abs/2406.10025 - 
+ProtoS-ViT: Visual foundation models for sparse self-explainable classifications
+
+
+https://arxiv.org/abs/2202.03482 - 
+Navigating Neural Space: Revisiting Concept Activation Vectors to Overcome Directional Divergence
 
 ### ISIC
 
