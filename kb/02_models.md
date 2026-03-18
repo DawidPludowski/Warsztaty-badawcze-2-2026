@@ -15,16 +15,16 @@
 [Link]
 
 * **Publikacja:** "Learning Transferable Visual Models From Natural Language Supervision" (A. Radford, J. W. Kim, C. Hallacy i inni, OpenAI).
-* **Link:** [https://arxiv.org/abs/2103.00020](https://arxiv.org/abs/2103.00020)
+* **Link:** [https://proceedings.mlr.press/v139/radford21a](https://proceedings.mlr.press/v139/radford21a)
 
 [Performance]
 
-* **Przewaga nad modelami nadzorowanymi:** Wygrywa z w pełni nadzorowanym klasyfikatorem liniowym ResNet na 16 z 27 badanych zbiorów danych w ustawieniu *zero-shot* (bez wcześniejszego treningu na tych danych).
+* **Przewaga nad modelami nadzorowanymi:** Wygrywa z w pełni nadzorowanym ResNet z ostatnią warstwą liniową do klasyfikacji na 16 z 27 badanych zbiorów danych w ustawieniu *zero-shot* (bez wcześniejszego treningu na tych danych).
 * **Rozpoznawanie akcji:** Znacznie lepiej radzi sobie na zbiorach wideo – dowodzi to, że język naturalny lepiej uczy czasowników niż rzeczowników.
 * **Rekord na STL10:** Na tym zbiorze (niska jakość, 10 klas) osiąga 99,3% skuteczności w *zero-shot*, co jest najlepszym dotychczasowym wynikiem.
-* **ImageNet:** Dorównuje nadzorowanemu modelowi ResNet-50 bez wykorzystania żadnego z ponad miliona przykładów treningowych z tego zbioru.
-* **Porównanie z *few-shot*:** Osiąga wyniki na poziomie modeli trenowanych na 4 przykładach na klasę. Dorównuje również ówczesnemu liderowi (BiT-M ResNet-152x2), który był uczony na 16 przykładach dla klasy.
-* **Efektywność przestrzeni cech:** Zwykły klasyfikator liniowy potrzebuje zazwyczaj od kilku do nawet 194 opisanych przykładów na klasę, aby osiągnąć ten sam wynik co CLIP w tej samej przestrzeni cech.
+* **Dobry wynik na zbiorze ImageNet:** Dorównuje nadzorowanemu modelowi ResNet-50 bez wykorzystania żadnego z ponad miliona przykładów treningowych z tego zbioru.
+* **Porównanie z *few-shot*:** Osiąga wyniki na poziomie modeli trenowanych na 4 przykładach na klasę, podczas gdy on sam nie widział wcześniej żadnego przykładu z tej klasy - będąc trenowanym na otwartym zbiorze zdjeć z internetu. Dorównuje również skutecznością ówczesnemu liderowi (BiT-M ResNet-152x2), który był uczony na 16 przykładach dla klasy.
+* **Efektywność przestrzeni cech:** Po wygenerowaniu embeddingów zdjęć za pomocą pewnych algorytmów (np. ResNet) CLIP potrafi je częściej lepiej przypisać niż klasyfikatory wytrenowane stricte na konkretnym zbiorze danych. Największa różnica jaka była zaobserwowana to potrzeba aż 184 zdjęć na klasę, żeby zwykły klasyfikator radził sobie tak jak CLIP - na zbiorze FER2013.
 * **Skalowalność i moc obliczeniowa:** Skuteczność mocno rośnie wraz ze wzrostem mocy obliczeniowej (podobnie jak w modelach GPT). Model jest 3 razy bardziej efektywny obliczeniowo niż klasyczne sieci konwolucyjne.
 * **Odporność na przesunięcie rozkładu (*data distribution shift*):** CLIP jest wysoce odporny na np. zmiany perspektywy. Podczas gdy klasyczne modele zapamiętywały wzorce specyficzne dla ImageNet, w CLIP różnica dokładności między znanymi a nowymi danymi spadła o 75%.
 * **Wada *fine-tuningu*:** Tradycyjne douczanie na docelowym zbiorze zwiększa w nim dokładność, ale kosztem drastycznego spadku skuteczności na innych danych.
