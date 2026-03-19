@@ -93,7 +93,7 @@
 
 *Warning: this dataset is not really good in terms of quality*.
 
-### CounterAnimal
+### CounterAnimals
 
 #### Overview
 **CounterAnimal** is a specialized evaluation dataset introduced in the paper  
