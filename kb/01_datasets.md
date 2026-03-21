@@ -77,10 +77,60 @@
 
 **Link**: [FunnyBirds: A Synthetic Vision Dataset for a Part-Based Analysis of Explainable AI Methods](https://openaccess.thecvf.com/content/ICCV2023/html/Hesse_FunnyBirds_A_Synthetic_Vision_Dataset_for_a_Part-Based_Analysis_of_ICCV_2023_paper.html)
 
-### ISIC
+### ISIC 
+**Link**: [Skin lesion analysis toward melanoma detection: A challenge at the 2017 International symposium on biomedical imaging (ISBI), hosted by the international skin imaging collaboration (ISIC)](https://ieeexplore.ieee.org/abstract/document/8363547)
+ 
+**Short Description**:
+The International Skin Imaging Collaboration (ISIC) is a global partnership that has organized the world's largest public repository of dermoscopic images of skin lesions annotated with expanded metadata. Their [archive](https://www.isic-archive.com/) has been used for consecutive years to host challenges on skin lesion analysis toward melanoma detection. As of today the repository contains 549,571 public images and 1,203,225 in total. 
 
-**Link**: [https://ieeexplore.ieee.org/abstract/document/8363547](https://ieeexplore.ieee.org/abstract/document/8363547) (*Note: ISIC is released in multiple versions, almost 1 version per year, so newer versions should be mentioned/compared*)
+**Overall volume metrics **: Number of images: 549,571; up to 8 diagnostic groups (depends on edition); up to 80 features for each image (for 2024 edition)
 
+**ISIC Challenges History**
+
+Below is a comprehensive comparison of the major ISIC Challenges over the years. This table provides historical context on how the focus of skin cancer AI research has evolved.
+
+| Year | Primary Dataset Name / Source | Train Images | Diagnostic Scope (Classes) | Key Focus & Historical Innovation |
+|:---:|---|---|---|---|
+| **2016** | ISIC Archive Subset | 900 | 2 Classes <br>*(Melanoma vs. All)* | **Proof of Concept:** The inaugural challenge. Focused heavily on basic lesion segmentation and establishing the first standardized baseline for deep learning in dermatology. |
+| **2017** | ISIC Archive Subset | 2,000 | 3 Classes <br>*(MEL, NV, SK)* | **Interpretability:** Introduced Dermoscopic Feature Extraction (e.g., detecting *streaks* or *pigment networks*). Pushed for models that could "explain" their reasoning using clinical taxonomy. |
+| **2018** | [HAM10000](https://pmc.ncbi.nlm.nih.gov/articles/PMC6091241/)  | 10,015 | 7 Classes <br>*(Realistic multi-class)* | **Clinical Realism & Imbalance:** The massive leap in scale. Forced models to handle extreme real-world class imbalance. |
+| **2019** | HAM10000 + [BCN20000](https://api.isic-archive.com/collections/249/) | 25,331 | 7 Classes + OOD  | **Out-of-Distribution (OOD):** Added an "unknown" class to test if models could say "I don't know" when faced with novel or unrepresented lesions. Focused heavily on mitigating artifact bias. |
+| **2020** | [ISIC 2020](https://doi.org/10.34970/2020-ds01) | 33,126 | 2 Classes <br>*(Melanoma vs. Benign)* | **Patient-Level Context:** Images were grouped by patient ID. Challenged models to replicate the clinical **"Ugly Duckling" sign** (detecting a melanoma by comparing it to the patient's other benign moles). |
+| **2024** | [ISIC 2024]( https://doi.org/10.34970/2024-slice-3d) | 401,059 <br> | Binary <br>*(Malignant vs. Benign)* | **3D Total Body Photography (3D-TBP):** A paradigm shift from close-up dermoscopy to processing hundreds of thousands of small crops from wide-field 3D cameras, heavily integrating tabular patient metadata. |
+
+**Classes available in the cited edition**:
+
+| Abbreviation | Full name | Malignant? | Notes |
+|---|---|---|---|
+| MEL | Melanoma | Yes | Deadliest form of skin cancer; main target for detection |
+| NV | Melanocytic Nevus | No | Benign mole; serves as the primary healthy baseline |
+| SK | Seborrheic Keratosis | No | Benign non-melanocytic growth; key distractor visually similar to melanoma |
+
+Description of classes for other datasets in archive can be found here ([link to paper](https://pmc.ncbi.nlm.nih.gov/articles/PMC6091241/))
+
+**Challenge Structure (ISIC 2017)**:
+
+The 2017 challenge was structured into three distinct tasks, designed to mimic a dermatologist's step-by-step diagnostic process:
+
+1. **Task 1: Lesion Segmentation**: Generating a binary mask to accurately separate the skin lesion from the surrounding healthy skin and background.
+2. **Task 2: Dermoscopic Feature Extraction**: Identifying and localizing specific clinical dermoscopic patterns within the lesion (e.g., *atypical pigment network*, *streaks*, *milia-like cysts*). This was a crucial step towards building interpretable AI models.
+3. **Task 3: Disease Classification**: The final diagnostic step. Models had to classify the crop into one of three core categories mentioned above. 
+
+**Known biases**:
+1. models tend to predict malignancy based on the presence of surgical skin markings, rulers, or band-aids ([link to paper](https://pmc.ncbi.nlm.nih.gov/articles/PMC6694463/))
+2. models tend to perform significantly worse on darker skin tones due to extreme dataset imbalance (the vast majority of images are from fair-skinned populations) ([link to paper](https://arxiv.org/abs/2308.09640))
+3. models tend to rely on image artifacts (like dark corners/vignetting) or background skin rather than the lesion itself, maintaining high accuracy even if the actual lesion is completely masked ([link to paper](https://openaccess.thecvf.com/content_CVPRW_2019/papers/ISIC/Bissoto_DeConstructing_Bias_on_Skin_Lesion_Datasets_CVPRW_2019_paper.pdf))
+
+
+
+**Related papers**:
+ **Related papers (ISIC 2017)**:
+
+**Related papers**:
+
+1. [Skin Lesion Analysis Toward Melanoma Detection: A Challenge at the 2017 ISBI](https://arxiv.org/abs/1710.05006) - The official ISIC 2017 summary detailing the dataset setup, the three clinical tasks, and an analysis of top-performing algorithms.
+2. [RECOD Titans at ISIC Challenge 2017](https://arxiv.org/abs/1703.04819) - A top-performing team's breakdown on using transfer learning and specific data augmentation to overcome the small 2,000-image dataset constraint.
+3. [Skin Lesion Classification Using Deep Multi-scale Convolutional Neural Networks](https://arxiv.org/abs/1703.01402) - A highly cited approach using a multi-scale Inception-v3 network to successfully mimic how a dermatologist zooms in and out to analyze lesions.
 ### ImageNet + WordNet
 
 *Note: When used like in [this paper](https://arxiv.org/pdf/2602.11448)*
