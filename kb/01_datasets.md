@@ -85,6 +85,46 @@
 
 *Note: When used like in [this paper](https://arxiv.org/pdf/2602.11448)*
 
+### ImageNet - content
+
+**Link**: [ImageNet: A Large-Scale Hierarchical Image Database](https://ieeexplore.ieee.org/document/5206848) and the [Official ImageNet Website](https://www.image-net.org/).
+
+![Sample images from ImageNet](https://viso.ai/wp-content/uploads/2024/04/ImageNet.jpg)
+*Sample images from ImageNet, sourced from viso.ai.*
+
+**Impact**: As of March 2026, the foundational 2009 paper has recorded **93,041 citations** on Google Scholar. The project represents a fundamental shift in AI research, famously summarized by its creator, Fei-Fei Li: 
+> *"The paradigm shift of the ImageNet thinking is that while a lot of people are paying attention to models, let’s pay attention to data. Data will redefine how we think about models."*
+
+It established the **ILSVRC** (ImageNet Large Scale Visual Recognition Challenge), which served as the definitive benchmark for deep learning progress between 2010 and 2017.
+
+**Short Description**: ImageNet is a large-scale visual ontology based on the **WordNet** lexical structure. It was designed to map the physical world into a structured digital format by associating objects with a hierarchical network of concepts . It pioneered a "data-centric" paradigm, demonstrating that massive scale and taxonomical diversity are essential for developing robust and generalizable visual recognition systems.
+
+**Metrics**: 
+* **Total Volume**: 14,197,122 images categorized into 21,841 distinct synsets.
+* **ILSVRC Subset**: The most widely used version for model training, focusing on 1,000 selected categories and containing 1,431,167 images
+* **Verification**: To remove irrelevant images from a pool of over 160 million candidates, labels were manually verified by over 50,000 workers via Amazon Mechanical Turk.
+
+**Concepts**: 
+The dataset is structured using **Synsets** (Sets of Synonyms) from WordNet:
+* **Semantic Precision**: Instead of using ambiguous keywords, ImageNet groups synonymous terms into a single synset (e.g., "dog" and "Canis familiaris"). This resolves polysemy, distinguishing between different meanings of the same word, such as "bank" as a financial institution vs. a river bank.
+* **Taxonomical Hierarchy**: Concepts are linked via **hypernymy** (is-a relationships). A "Siberian Husky" is nested under "Working Dog," which is under "Dog," and eventually "Mammal." This structure allows for evaluating models based on their hierarchical understanding of categories.
+
+**Relevance**: 
+In the context of concept detection and Explainable AI:
+1. **Feature Extraction Baseline**: Most models used for Concept Activation Vectors (CAVs) are pre-trained on ImageNet. Their internal "understanding" of visual concepts is fundamentally shaped by the distribution of these 1,000 categories.
+2. **Semantic Error Analysis**: The hierarchy enables the measurement of "semantic distance" - identifying if a model's failure is a fine-grained misclassification (e.g., two similar dog breeds) or a catastrophic semantic error (e.g., mistaking an animal for a vehicle).
+
+**Known biases**:
+
+1. **Geographic and Cultural Skew**: The dataset is heavily biased toward Western, high-income perspectives. Models trained on ImageNet often fail to recognize common objects when they appear in non-Western cultural contexts, such as traditional wedding attire or regional tools. ([link to paper](https://openaccess.thecvf.com/content_CVPRW_2019/html/cv4gc/de_Vries_Does_Object_Recognition_Work_for_Everyone_CVPRW_2019_paper.html))
+2. **ImageNet Roulette and The Person Subtree**:
+The "person" subtree inherited a stagnant WordNet ontology of 2,832 categories, including derogatory and non-visual labels . Due to the low imageability of abstract concepts, models were forced to perform "automated phrenology" by linking physical appearance to social or moral traits . A comprehensive audit removed 1,593 unsafe synsets (600,040 images) and 1,081 non-imageable categories (443,547 images). ([link to paper](https://dl.acm.org/doi/10.1145/3351095.3375709))
+
+**Related Literature**:
+
+* **AlexNet (2012)**: The pivotal architecture that utilized ImageNet to prove the superiority of Convolutional Neural Networks over traditional feature engineering ([link to paper](https://proceedings.neurips.cc/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html)).
+* **ResNet (2016)**: Introduced Residual Learning, enabling the training of networks with over 100 layers on ImageNet ([link to paper](https://openaccess.thecvf.com/content_cvpr_2016/html/He_Deep_Residual_Learning_CVPR_2016_paper.html)).
+
 ## With one concept
 
 ### MetaShift
