@@ -95,7 +95,117 @@
 
 ### CounterAnimals
 
-**Link**: [A Sober Look at the Robustness of CLIPs to Spurious Features](https://proceedings.neurips.cc/paper_files/paper/2024/hash/dd59fad18638714e6c447a3b7b9c4160-Abstract-Conference.html)
+#### Overview
+**CounterAnimal** is a specialized evaluation dataset introduced in the paper  
+[A Sober Look at the Robustness of CLIPs to Spurious Features](https://proceedings.neurips.cc/paper_files/paper/2024/hash/dd59fad18638714e6c447a3b7b9c4160-Abstract-Conference.html).
+
+The dataset is designed to systematically evaluate the robustness of vision-language models (particularly CLIP) against **spurious correlations**, with a focus on background-dependent biases learned from large-scale web data.
+
+#### Motivation
+Traditional robustness benchmarks often exhibit **ImageNet Bias**, meaning they are tailored to older supervised models and fail to capture the weaknesses of modern models like CLIP. Although CLIP appears robust on these benchmarks, such evaluations do not expose the **shortcut learning** behavior induced by web-scale training.
+
+CounterAnimal addresses this gap by providing a dataset explicitly constructed to test whether models rely on **contextual cues (e.g., background)** instead of **object-centric features**.
+
+#### Spurious Correlations
+A **spurious correlation** refers to a false association learned by a model between an object and its surrounding context.
+
+- **Example:** A model trained on many images of cows on green grass may learn *"green background → cow"*.
+- **Failure Case:** The model fails when presented with a cow on a beach due to the absence of the expected background.
+
+CounterAnimal evaluates whether models truly recognize animals or rely on such contextual shortcuts (e.g., identifying an ice bear only when it appears on snow).
+
+#### Dataset Composition
+
+- **Total Images:** 13,100
+- **Number of Classes:** 45 animal classes
+- **Source:** Images collected from the iNaturalist platform
+- **Class Origin:** Animal categories derived from the ImageNet-1K label set
+
+##### Easy vs. Hard Split
+The dataset is divided based on background familiarity:
+
+- **Easy Set:** 7,174 images  
+  - Contain animals in typical or commonly associated backgrounds  
+  - Example: ice bear on snow  
+
+- **Hard Set:** 5,926 images  
+  - Contain animals in atypical or uncommon backgrounds  
+  - Example: ice bear on grass  
+
+This split enables direct measurement of performance degradation under background distribution shifts.
+
+#### Dataset Construction Pipeline
+
+The dataset was created using a combination of automated filtering and manual annotation through a four-step process:
+
+##### 1. Data Collection
+- Retrieved **300–800 raw images per class** from iNaturalist  
+- Queries based on ImageNet-1K animal class names  
+
+##### 2. Data Curation (Manual Cleaning)
+Images were manually filtered using the following criteria:
+
+- **Label Noise:** Removal of incorrectly labeled animals  
+- **Feature Noise:** Removal of corrupted or broken images  
+- **Obscurity:** Removal of images containing multiple animal classes  
+- **Clarity:** Removal of images where the animal is heavily occluded or too small  
+
+##### 3. Background Labeling
+- Each image was manually annotated with one of **14 background categories**, including:
+  - snow
+  - grass
+  - water
+  - road
+  - hand
+  - sky
+  - (and other environment types)
+
+##### 4. Spurious Correlation Discovery
+- A CLIP model was used to evaluate sensitivity to background changes:
+  - For each class, if altering background conditions led to an **accuracy drop > 5%**, the class was selected
+- Images were then categorized into:
+  - **Easy:** Backgrounds aligned with learned correlations
+  - **Hard:** Backgrounds that break learned correlations
+
+#### Evaluation Protocol
+
+- **Setting:** Zero-shot classification (zero-shot classification is when an AI identifies an object it has never seen before by comparing the image to a written description (like "a photo of a flamingo"))
+- **Task:** Identify the correct animal class without task-specific training
+- **Label Space:** Typically evaluated over the full **ImageNet-1K categories**
+- **Goal:** Measure robustness to background-induced distribution shifts
+
+
+#### Key Findings from Experiments
+
+##### 1. Generality of Bias
+- Significant performance drops (**17–30% or more**) observed across:
+  - Different CLIP architectures (e.g., ViT-B/32, ViT-L/14)
+  - Different pretraining datasets (e.g., LAION, OpenAI)
+- Indicates that spurious correlations are inherent to web-scale training
+
+##### 2. ImageNet Paradox
+- Standard ImageNet-trained models outperform CLIP on background-shifted (Hard) samples
+- Suggests CLIP relies more heavily on contextual information than traditional models
+
+##### 3. Data Quality vs. Quantity
+- Increasing dataset size (e.g., LAION-400M → LAION-2B) does **not** eliminate bias
+- High-quality curated datasets (e.g., DataComp, DFN) significantly improve robustness
+- Emphasizes importance of **data quality over scale**
+
+##### 4. Model Size Effects
+- Larger model architectures show improved robustness
+- Suggests increased capacity helps disentangle object features from background context
+
+#### Strategic Conclusions
+
+1. **Distribution Shift Remains Unresolved**  
+   Large vision-language models still rely on shortcut learning and have not achieved true semantic understanding.
+
+2. **Need for New Benchmarks**  
+   Existing benchmarks are insufficient for evaluating modern models. CounterAnimal provides a targeted tool for diagnosing background bias.
+
+3. **Importance of Data Curation**  
+   Robustness depends more on dataset quality and diversity than sheer scale.
 
 ### Waterbirds
 
