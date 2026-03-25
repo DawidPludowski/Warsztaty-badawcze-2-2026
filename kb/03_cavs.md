@@ -87,8 +87,11 @@ Classification-free CAVs are created based on statistics and do not assume any s
 
 ### SAS (Sparse Activation Steering)
 
-#### **Introduction & Motivation:** 
-While Large Language Models (LLMs) generate fluent text, precise behavioral control—such as modulating hallucinations—remains difficult due to the lack of flexibility and interpretability in traditional alignment methods like RLHF (Reinforcement Learning from Human Feedback). *Activation steering* offers a runtime alternative, yet conventional dense methods are hindered by **superposition** (it is a phenomenon where neural networks compress more concepts than they have available dimensions, causing multiple unrelated features to become "entangled" within the same neurons and making it impossible to precisely isolate or control a single behavior without unintentionally affecting others.). One way to solve adress this problem is **Sparse Activation Steering (SAS)** framework. By utilizing Sparse Autoencoders (SAEs), SAS decomposes dense activations into a structured dictionary of disentangled, monosemantic features, enabling highly precise, modular, and interpretable interventions. Our key contributions include a novel steering framework for reinforcing or suppressing specific behaviors, empirical evidence that scaling SAE dictionary sizes enhances feature clarity, and a demonstration of feature compositionality for simultaneous multi-behavior control.
+#### **Introduction & Motivation** 
+While Large Language Models (LLMs) generate fluent text, precise behavioral control—such as modulating hallucinations—remains difficult due to the limited flexibility and interpretability of traditional alignment methods like RLHF (Reinforcement Learning from Human Feedback). *Activation steering* offers a runtime alternative, yet conventional dense methods are hindered by **superposition** (a phenomenon where neural networks compress more concepts than they have available dimensions, causing unrelated features to become entangled within the same neurons).  
+
+**Sparse Activation Steering (SAS)** addresses this issue by using Sparse Autoencoders (SAEs) to decompose dense activations into a structured dictionary of disentangled, monosemantic features, enabling precise and interpretable interventions.
+
 
 **How SAS Vector Generation Works (6-Step Process):**
 1. **Contrastive Pairs:** Construct a pair of prompts where one completion shows the desired behavior (positive) and the other its exact opposite (negative).
@@ -103,7 +106,7 @@ While Large Language Models (LLMs) generate fluent text, precise behavioral cont
 **Activation Steering**
 Activation steering is an inference-time intervention that modifies LLM latent representations to guide model generation toward or away from specific behaviors (e.g., honesty, refusal, or sentiment) without the need for fine-tuning. 
 
-A foundational method is **Contrastive Activation Addition (CAA)**, where a steering vector $v_{(b,\ell)}$ is computed as the difference between mean activations of positive ($c^+$) and negative ($c^-$) behavior completions:
+A foundational method is **Contrastive Activation Addition (CAA)**, where a steering vector $v_{(b,\ell)}$ is computed as the difference between mean activations of positive ($c^+$) and negative ($c^-$) behavior completions across the dataset $D_b$:
 
 $$v_{(b,\ell)} = \frac{1}{|D_b|} \sum_{(p_i,c^+_i,c^-_i) \in D_b} [ a_\ell(p_i, c^+_i) - a_\ell(p_i, c^-_i) ]$$
 
@@ -121,17 +124,20 @@ The core innovation of SAS is performing this steering within the **sparse laten
 3.  **Consistency Check:** The modified sparse representation is passed through the SAE non-linearity $\sigma$ again. This ensures the steered activations remain within the learned sparse distribution.
 4.  **Decoding:** The steered sparse features are projected back into the original dense activation space via the SAE decoder to continue the model's forward pass.
 
-> **Note on Classifier Guidance:** Mathematically, activation steering shares a lineage with classifier-based guidance in diffusion models. Under a linear classifier assumption, both methods converge on the same principle of shifting representations along a gradient toward a target class or behavior.
-
 #### **Sparse Autoencoders (SAEs)**
 
 **The Challenge: Superposition**
+
 Large Language Models often compress more concepts than they have available dimensions in their internal representations. This leads to **superposition**—a phenomenon where unrelated concepts become entangled within the same neurons. While efficient for the model, it makes precise control and interpretability nearly impossible.
 
+
 **The Solution: Dictionary Learning**
+
 SAEs address superposition by decomposing dense activations into a high-dimensional, sparse, and ideally **monosemantic** (single-meaning) feature space.
 
+
 **Architecture & Mechanics**
+
 An SAE uses an encoder-decoder structure to map a dense activation vector $a \in \mathbb{R}^n$ to a sparse latent representation $f(a) \in \mathbb{R}^M$ (where $M \gg n$):
 
 * **Encoder:** $f(a) = \sigma(W_{enc}a + b_{enc})$
@@ -139,14 +145,19 @@ An SAE uses an encoder-decoder structure to map a dense activation vector $a \in
 
 The activation function $\sigma$ (such as ReLU, TopK, or JumpReLU) is critical as it enforces the **sparsity** of the representation.
 
+
 **Training Objectives**
+
 SAEs are trained by balancing two competing goals in the loss function $L(a)$:
-1.  **Reconstruction Loss:** $\|a - \hat{a}(f(a))\|^2_2$ — ensures the decoded output faithfully matches the original input.
-2.  **Sparsity Penalty:** $\lambda \cdot \|f(a)\|_1$ — minimizes the number of active features, forcing the model to find the most "important" disentangled directions.
+1.  **Reconstruction Loss:** $\|\|a - \hat{a}(f(a))\\||^2_2$ — ensures the decoded output faithfully matches the original input.
+2.  **Sparsity Penalty:** $\lambda \cdot \|\|f(a)\|\|_1$ — minimizes the number of active features, forcing the model to find the most "important" disentangled directions.
+
 
 **Interpretability & Control**
+
 The reconstructed activation can be viewed as a linear combination of "dictionary directions" (columns of the decoder matrix $d_i$):
 $$\hat{a}(f) = \sum_{i=1}^{M} f_i \cdot d_i$$
+
 
 Because only a small subset of features $f_i$ are active at any time, SAEs allow for **modular control**. Specific behaviors can be isolated, adjusted, or suppressed independently without the interference typical of dense representation spaces.
 
@@ -164,10 +175,7 @@ Instead of converting dense vectors, SAS derives steering vectors **directly fro
 2. **Sparse Extraction:** Extract sparse latent matrices $S^+$ and $S^-$ for the layer $\ell$ using the SAE encoder $f_\ell$.
 3. **Mean Activation:** Compute sample means $v^+$ and $v^-$ for features. A threshold $\tau$ is used to keep only features that appear consistently across a fraction of the prompts.
 4. **Feature Isolation:** Identify and **remove shared features** (set to zero) that appear in both $v^+$ and $v^-$. This eliminates "noise" like shared syntax or positional artifacts, leaving only behavior-specific features.
-5. **Vector Composition:** The final SAS vector is defined as:
-   $$v_{(b,\ell)} = v^+_{(b,\ell)} - v^-_{(b,\ell)}$$
-   The positive term reinforces desired traits, while the negative term suppresses contradictory model tendencies.
-
+5. **Vector Composition:** The final SAS vector is defined as: $$v_{(b,\ell)} = v^+_{(b,\ell)} - v^-_{(b,\ell)}$$ The positive term reinforces desired traits, while the negative term suppresses contradictory model tendencies.
 
 During generation, the model's activations are modified in the sparse space while maintaining the structural integrity of the SAE.
 
