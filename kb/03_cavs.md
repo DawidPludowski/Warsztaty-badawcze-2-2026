@@ -177,7 +177,11 @@ Instead of converting dense vectors, SAS derives steering vectors **directly fro
 2. **Sparse Extraction:** Extract sparse latent matrices $S^+$ and $S^-$ for the layer $\ell$ using the SAE encoder $f_\ell$.
 3. **Mean Activation:** Compute sample means $v^+$ and $v^-$ for features. A threshold $\tau$ is used to keep only features that appear consistently across a fraction of the prompts.
 4. **Feature Isolation:** Identify and **remove shared features** (set to zero) that appear in both $v^+$ and $v^-$. This eliminates "noise" like shared syntax or positional artifacts, leaving only behavior-specific features.
-5. **Vector Composition:** The final SAS vector is defined as: $$v_{(b,\ell)} = v^+_{(b,\ell)} - v^-_{(b,\ell)}$$ The positive term reinforces desired traits, while the negative term suppresses contradictory model tendencies.
+5. **Vector Composition:** The final SAS vector is defined as:
+
+$$v_{(b,\ell)} = v^+_{(b,\ell)} - v^-_{(b,\ell)}$$ 
+
+The positive term reinforces desired traits, while the negative term suppresses contradictory model tendencies.
 
 During generation, the model's activations are modified in the sparse space while maintaining the structural integrity of the SAE.
 
