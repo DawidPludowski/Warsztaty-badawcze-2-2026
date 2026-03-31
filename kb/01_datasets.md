@@ -69,7 +69,87 @@
 
 ### Cub-200
 
-**Link**: [The Caltech-UCSD Birds-200-2011 Dataset](https://authors.library.caltech.edu/27452/1/CUB_200_2011.pdf) (*Note: direct link to the pdf download*)
+**Article link**: [The Caltech-UCSD Birds-200-2011 Dataset](https://authors.library.caltech.edu/27452/1/CUB_200_2011.pdf) (*direct link to the pdf download*); it is an extension of a previously published dataset, which can be found under this link: [Caltech-UCSD Birds 200](https://authors.library.caltech.edu/records/cyyh7-dkg06)
+
+**Dataset link**: [raw files](https://data.caltech.edu/records/65de6-vp158) or [kaggle, with file content preview](https://www.kaggle.com/datasets/wenewone/cub2002011/data)
+
+**Short Description**: The dataset contains images of birds labelled by species, annotated with bounding boxes, part locations (where in the picture are various bird body parts), and attribute labels (e.g. beak shape, color, etc.). The dataset seems quite popular, with over 5700 citations on its expanded version (which is the one linked above); its authors recommend it mostly for multi-class object detection. 
+
+**Volume metrics**: 
+- number of images: 11,788; 
+- number of attributes: 28 per image (each with multiple options, in total 312 binary attributes);
+- number of bird species: 200; the classes are reasonably well-balanced, with 40-60 images in each class. 
+
+**Attributes**: There are 28 attributes, each with a fixed set of possible values: 
+| Attribute | Values |
+| :--- | :--- |
+| **Bill shape**       | cone, all-purpose, dagger, hooked seabird, hooked, curved (up or down), spatulate, needle, specialized |
+| **Wing Color**       | blue, black, orange, buff, brown, grey, white, red, pink, rufous, yellow, olive, purple, green, iridescent |
+| **Upperparts Color** | blue, black, orange, buff, brown, grey, white, red, pink, rufous, yellow, olive, purple, green, iridescent |
+| **Underparts Color** | blue, black, orange, buff, brown, grey, white, red, pink, rufous, yellow, olive, purple, green, iridescent |
+| **Breast Pattern**   | solid, striped, spotted, multi-colored |
+| **Back color**       | blue, black, orange, buff, brown, grey, white, red, pink, rufous, yellow, olive, purple, green, iridescent |
+| **Tail shape**       | forked tail, rounded tail, notched tail, fan-shaped tail, pointed tail, squared tail |
+| **Upper tail color** | blue, black, orange, buff, brown, grey, white, red, pink, rufous, yellow, olive, purple, green, iridescent |
+| **Head Pattern**     | malar, eyebrow, capped, eyering, unique pattern, striped, spotted, crested, masked, plain, eyeline |
+| **Breast Color**     | blue, black, orange, buff, brown, grey, white, red, pink, rufous, yellow, olive, purple, green, iridescent |
+| **Throat Color**     | blue, black, orange, buff, brown, grey, white, red, pink, rufous, yellow, olive, purple, green, iridescent |
+| **Eye color**        | blue, black, orange, buff, brown, grey, white, red, pink, rufous, yellow, olive, purple, green |
+| **Bill length**      | shorter than head, about the same as head, longer than head |
+| **Forehead Color**   | blue, black, orange, buff, brown, grey, white, red, pink, rufous, yellow, olive, purple, green, iridescent |
+| **Under tail color** | blue, black, orange, buff, brown, grey, white, red, pink, rufous, yellow, olive, purple, green, iridescent |
+| **Nape color**       | blue, black, orange, buff, brown, grey, white, red, pink, rufous, yellow, olive, purple, green, iridescent |
+| **Belly color**      | blue, black, orange, buff, brown, grey, white, red, pink, rufous, yellow, olive, purple, green, iridescent |
+| **Wing shape**       | pointed-wings, tapered-wings, long-wings, rounded-wings, broad-wings |
+| **Size**             | small (5-9 in), very small (3-5 in), medium (9-16 in), very large (32-72 in), large (16-32 in) |
+| **Shape**            | perching-like, tree-clinging-like, gull-like, duck-like, swallow-like, upright-perching water-like, sandpiper-like, upland-ground-like, chicken-like-marsh, pigeon-like, long-legged-like, hummingbird-like, hawk-like, owl-like |
+| **Back pattern**     | solid, striped, spotted, multi-colored |
+| **Tail pattern**     | solid, striped, spotted, multi-colored |
+| **Belly Pattern**    | solid, striped, spotted, multi-colored |
+| **Primary Color**    | blue, black, orange, buff, brown, grey, white, red, pink, rufous, yellow, olive, purple, green, iridescent |
+| **Leg color**        | blue, black, orange, buff, brown, grey, white, red, pink, rufous, yellow, olive, purple, green, iridescent |
+| **Bill color**       | blue, black, orange, buff, brown, grey, white, red, pink, rufous, yellow, olive, purple, green, iridescent |
+| **Crown color**      | blue, black, orange, buff, brown, grey, white, red, pink, rufous, yellow, olive, purple, green, iridescent |
+| **Wing Pattern**     | solid, striped, spotted, multi-colored |
+
+All of the above attributes are represented as a set of multiple binary attributes, of which there is 312 in total. Each of the attributes is connected with a specific body part that it applies to, according to a table below: 
+| Body Part | Attributes |
+| :--- | :--- |
+| **Beak**             | bill shape, bill color, bill length |
+| **Belly**            | belly pattern, belly color |
+| **Throat**           | throat color |
+| **Crown**            | crown color |
+| **Tail**             | upper tail color, under tail color, tail pattern, tail shape |
+| **Back**             | back color, back pattern |
+| **Forehead**         | forehead color |
+| **Nape**             | nape color |
+| **Eye**              | eye color |
+| **Wing**             | wing pattern, wing color, wing shape |
+| **Breast**           | breast pattern, breast color |
+| **Bird (all parts)** | size, shape |
+| **Head**             | head pattern |
+| **Leg**              | leg color |
+| **Body**             | underparts color, upperparts color, primary color |
+
+The complete list of body parts contains: back, beak, belly, breast, crown, forehead, left eye, left leg, left wing, nape, right eye, right leg, right wing, tail, throat. Each picture is annotated with the pixel location and visibility of all the body parts. 
+
+**Example Images**: 
+| Yellow Headed Blackbird | Bobolink | Red Faced Cormorant | Indigo Bunting |
+| :--- | :--- | :--- | :--- |
+| ![Yellow Headed Blackbird](image-2.png) | ![Bobolink](image-1.png) | ![Red Faced Cormorant](image-3.png) | ![Indigo Bunting](image-4.png) |
+
+**Relevance**: Concepts are well-labelled, so the dataset should be pretty reliable for all concept detection tasks. They're also quite human-readable, since they're all based on objective visual traits such as color or shape. Moreover, it's easy to isolate images containing a particular concept (to later use for CAV computation). 
+
+**Data Gathering & Labelling Methodology**: The data for different species was initially gathered by collecting all images from the Wikipedia site for this species; then, additional images were found through Flickr image search using the Wikipedia pictures as reference. Later, they were filtered and annotated by thousands of workers through Amazon Mechanical Turk website. Multiple workers' responses for the same image were compared against one another to create a single, coherent final label. As a result of this methodology, one should be cautious when using the dataset with pre-trained models, as many of them might have also been trained on the same Flickr images. 
+
+**Known issues**: 
+- Images returned by a Flickr query are often a result of one photographer taking many images of the same bird in a very short period of time, so the dataset often contains multiple near-identical images of a given bird. This causes issues with the train-test split: if some of these images are part of the training set, and some are in the test set, this results in a sort of data leakage (nearly identical pictures in training and test set). Thus, it is strongly recommended that we use the train-test split proposed by the authors, which intentionally avoids this issue. 
+- There are some spurious correlations between the bird features and the type of background in the pictures - e.g. water birds often appear with a blue water background, while land birds are more often photographed against grass or leaves. Thus, classification models often learn the background instead of the actual bird; this phenomenon was studied by researchers who created the Waterbirds dataset, which artificially changes the background on some pictures to one that's unusual for its bird species ([Sagawa et al., "Distributionally Robust Neural Networks for Group Shifts: On the Importance of Regularization for Worst-Case Generalization"](https://arxiv.org/pdf/1911.08731)). 
+- Similarly as above, there are also correlations between species and the pose/placement of the bird in the picture (e.g. birds that are easily scared are more often photographed from a distance), which also causes some biases in models ([Branson et al., "Bird Species Categorization Using Pose Normalized Deep Convolutional Nets"](https://arxiv.org/pdf/1406.2952)). 
+
+**Related Literature**: 
+- [Koh et al., "Concept Bottleneck Models"](https://arxiv.org/pdf/2007.04612): Uses CUB-200 dataset to train bottleneck models, ie. models which first train a model to predict some concepts (e.g. "wing color") and then predicting the label based only on these concepts, which allows for high explainability and possible model correction based on the mistakes at concept level. 
+- [Jaderberg et al., "Spatial Transformer Networks"](https://arxiv.org/pdf/1506.02025): Introduces a Spacial Transformer module, which can be inserted into a neural network architecture and taught to transform the data in the network (so that it becomes invariant to translation, scale, rotation, and more generic warping); it uses CUB-200 to test its performance. 
 
 ### FunnyBirds
 
