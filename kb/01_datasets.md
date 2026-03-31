@@ -135,7 +135,7 @@ ProtoS-ViT: Visual foundation models for sparse self-explainable classifications
 https://arxiv.org/abs/2202.03482 - 
 Navigating Neural Space: Revisiting Concept Activation Vectors to Overcome Directional Divergence
 
-### ISIC 
+### ISIC
 **Link**: [Skin lesion analysis toward melanoma detection: A challenge at the 2017 International symposium on biomedical imaging (ISBI), hosted by the international skin imaging collaboration (ISIC)](https://ieeexplore.ieee.org/abstract/document/8363547)
  
 **Short Description**:
