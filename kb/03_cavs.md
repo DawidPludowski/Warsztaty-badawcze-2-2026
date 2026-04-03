@@ -91,9 +91,7 @@ Classification-free CAVs are created based on statistics and do not assume any s
 
 #### Introduction
 
-Modern Large Language Models (LLMs) generate outputs based on patterns learned from vast datasets. However, they do not inherently distinguish between *desirable* and *undesirable* behaviors (e.g., being factual vs. hallucinating, helpful vs. sycophantic).
-
-**Behavior steering** refers to techniques that allow us to *actively guide* a model’s outputs toward specific traits without retraining the entire model.
+Modern Large Language Models (LLMs) generate outputs based on patterns learned from vast datasets. However, they do not inherently distinguish between *desirable* and *undesirable* behaviors (e.g., being factual vs. hallucinating, helpful vs. sycophantic). **Behavior steering** refers to techniques that allow us to *actively guide* a model’s outputs toward specific traits without retraining the entire model.
 
 **Why this matters:**
 - Changing LLMs behaviour without costly and rigid **fine-tuning**
@@ -128,8 +126,7 @@ Earlier attempts to translate dense steering vectors into sparse spaces faced a 
 
 #### Proposed Solution: Sparse Activation Steering (SAS)
 
-Sparse Activation Steering (SAS) is built on a simple but powerful shift in perspective:  
-instead of controlling model behavior through **dense, entangled directions**, it operates in a **high-dimensional sparse feature space**, where representations are more structured and decomposed.
+Sparse Activation Steering (SAS) is built on a simple but powerful shift in perspective: instead of controlling model behavior through **dense, entangled directions**, it operates in a **high-dimensional sparse feature space**, where representations are more structured and decomposed.
 
 The key idea is that model activations can be expressed in terms of many **fine-grained features**, each capturing a narrow and more interpretable aspect of behavior. By working in this space, SAS enables direct manipulation of these features, rather than indirectly influencing behavior through coarse, mixed signals.
 
@@ -187,7 +184,6 @@ We compute average activations across samples:
 
 To ensure robustness, we apply a threshold $\tau$ and keep only features that appear consistently across many examples, i.e., features for which the fraction of samples with non-zero activation exceeds $\tau$.
 
----
 
 ##### Step 4: Isolating Behavior-Specific Features
 
@@ -216,7 +212,7 @@ $$
 \tilde{a}^t_\ell = \hat{a}^t_\ell \left( \sigma \big( f(a^t_\ell) + \lambda \cdot v_{(b,\ell)} \big) \right) + \Delta
 $$
 
-**KEy Components**
+**Key Components**
 
 - **$\lambda$ (steering strength):**  
   Controls intensity  
