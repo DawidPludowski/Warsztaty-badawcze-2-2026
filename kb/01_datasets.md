@@ -131,9 +131,13 @@ However, these limitations are intentional, since the goal is to create a **cont
 https://arxiv.org/abs/2406.10025 - 
 ProtoS-ViT: Visual foundation models for sparse self-explainable classifications
 
+This work introduces a vision transformer model that can explain its own predictions using interpretable concepts. It is related to FunnyBirds because the dataset allows testing whether the model correctly identifies which object parts are important for its decisions.
+
 
 https://arxiv.org/abs/2202.03482 - 
 Navigating Neural Space: Revisiting Concept Activation Vectors to Overcome Directional Divergence
+
+This paper analyzes CAVs and shows that they can incorrectly capture unrelated features instead of true concepts. FunnyBirds is particularly useful in this context, as its controlled design allows verifying whether CAV methods correctly identify the importance of specific object parts.
 
 ### ISIC
 **Link**: [Skin lesion analysis toward melanoma detection: A challenge at the 2017 International symposium on biomedical imaging (ISBI), hosted by the international skin imaging collaboration (ISIC)](https://ieeexplore.ieee.org/abstract/document/8363547)
