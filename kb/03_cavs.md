@@ -50,7 +50,7 @@ The authors argue their solution is superior because it operates directly on enc
 * **Custom LLM-generated data** (used specifically for the toxic/aggressive opinion generation task).
 
 ### [Related literature]
-Extensive related literature building upon this specific CAV method is difficult to provide, as the paper is quite recent and was actually rejected from an A* conference (Neurips).
+Extensive related literature building upon this specific CAV method is difficult to provide, as the paper is quite recent and was actually rejected from an A* conference, but it was accepted for Neurips workshop.
 
 The lack of adoption and the rejection stem from the following reviewer critiques, which highlight current gaps in this method's theoretical and practical standing:
 * **Lack of novelty:** Orthogonal projection is a widely used technique, and the paper failed to position itself well against existing, established methods.
