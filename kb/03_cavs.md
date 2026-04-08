@@ -85,6 +85,200 @@ Classification-free CAVs are created based on statistics and do not assume any s
 
 ## SAE-based
 
+### SAS (Sparse Activation Steering)
+
+[Steering Large Language Model Activations in Sparse Spaces](https://arxiv.org/pdf/2503.00177)
+
+#### Introduction
+
+Modern Large Language Models (LLMs) generate outputs based on patterns learned from vast datasets. However, they do not inherently distinguish between *desirable* and *undesirable* behaviors (e.g., being factual vs. hallucinating, helpful vs. sycophantic). **Behavior steering** refers to techniques that allow us to *actively guide* a model’s outputs toward specific traits without retraining the entire model.
+
+**Why this matters:**
+- Changing LLMs behaviour without costly and rigid **fine-tuning**
+- Enable **customization** (adapt behavior to specific use cases), for example:
+  - Improve **safety** (reduce harmful or misleading outputs)
+  - Increase **reliability** (e.g., factual accuracy)
+
+##### Limitations of Previous Approaches
+
+Earlier methods often relied on **dense representations**, where model behavior is controlled using vectors in a compressed latent space. However, dense representations suffer from **superposition**, a phenomenon where multiple unrelated concepts are encoded within the same set of neurons or dimensions. Instead of having a one-to-one mapping between features and meanings, the model reuses its limited representational capacity, causing different concepts to overlap in the same space.
+
+**Key Problems**
+- Dense vectors tend to **mix multiple concepts into a single representation**
+- A single “direction” may simultaneously encode:
+  - tone
+  - topic
+  - style
+  - bias
+
+**Consequences:**
+- Difficult to isolate and control a *specific behavior*
+- Steering one trait may unintentionally affect others
+- Leads to **unpredictable and less interpretable outcomes**
+
+**The "Out-of-Distribution" (OOD) Challenge**
+
+Earlier attempts to translate dense steering vectors into sparse spaces faced a critical barrier: dense vectors are inherently **out-of-distribution** for Sparse Autoencoders (SAEs). SAEs are optimized to reconstruct natural model activations during generation, not artificially constructed difference vectors.
+
+- **Inaccurate Reconstruction:** Passing a dense steering vector through an SAE often strips it of its original steering properties or introduces unwanted artifacts.
+- **Negative Projections:** SAEs typically operate in a **non-negative feature space** (enforced by activation functions like ReLU or JumpReLU). Dense vectors naturally contain negative values, meaning standard SAEs cannot process them correctly and discard crucial behavioral information.
+- **Mapping Errors:** Instead of cleanly activating specific sparse features, out-of-distribution dense vectors create noise across multiple neurons simultaneously, completely negating the primary benefit of sparsity - clean behavior isolation.
+
+#### Proposed Solution: Sparse Activation Steering (SAS)
+
+Sparse Activation Steering (SAS) is built on a simple but powerful shift in perspective: instead of controlling model behavior through **dense, entangled directions**, it operates in a **high-dimensional sparse feature space**, where representations are more structured and decomposed.
+
+The key idea is that model activations can be expressed in terms of many **fine-grained features**, each capturing a narrow and more interpretable aspect of behavior. By working in this space, SAS enables direct manipulation of these features, rather than indirectly influencing behavior through coarse, mixed signals.
+
+##### Core Intuition
+- In a sparse representation:
+  - Most features are **inactive (zero)** at any given time
+  - Only a small subset becomes active for a specific input
+- This creates a setting where:
+  - Features are more **specialized**
+  - Individual dimensions are more likely to correspond to **distinct concepts**
+
+##### Key advantages
+- **Better separation of behaviors**  
+  Individual traits (e.g., “refusal”, “factuality”) are less entangled and can be isolated more cleanly
+
+- **More precise control**  
+  Specific behaviors can be adjusted without unintentionally affecting others
+
+- **Improved interpretability**  
+  Active features are more meaningful, making the model’s behavior easier to understand and analyze
+
+- **Modularity**  
+  Different behaviors can be combined, adjusted, or removed independently, enabling flexible control (e.g. we can increase the tendency to take risks while answering with more empathy)
+
+##### Obtaining Sparse Representations
+
+Sparse Autoencoders (SAEs) learn these representations by minimizing a combination of **reconstruction error** and a **sparsity penalty**:
+
+$$
+L(a) = \underbrace{\| a - \hat{a}(f(a)) \|_2^2}_{\text{Reconstruction Loss}} + \lambda \underbrace{\| f(a) \|_1}_{\text{Sparsity Penalty}}
+$$
+
+- The $\ell_2$ term ensures faithful reconstruction of the input activations.
+- The $\ell_1$ term enforces sparsity, keeping only a small subset of features active.
+
+#### Constructing and Applying Concept Vectors
+
+After introducing sparse representations, we now describe how specific behaviors are translated into controllable vectors and injected into the model. The key idea is to identify which sparse features correspond to a desired behavior, construct a direction that amplifies those features while suppressing opposing ones, and inject this direction into the model’s internal activations during generation, enabling targeted, fine-grained control without disrupting the model’s overall behavior.
+
+  
+##### Step 1: Contrastive Setup
+
+We start with a dataset of prompts $p_i$ and two types of completions:
+- $c^+$: examples exhibiting the **desired behavior**
+- $c^-$: examples exhibiting the **opposite behavior**
+
+This contrast allows us to isolate what *distinguishes* the behavior of interest.
+
+
+##### Step 2: Sparse Feature Extraction
+
+For a given layer $\ell$, both types of completions are passed through the model and encoded into a sparse space:
+
+- $S^+ = f_\ell(p_i, c^+)$  
+- $S^- = f_\ell(p_i, c^-)$  
+
+where $f_\ell$ maps activations into sparse feature representations.
+
+
+##### Step 3: Aggregating Consistent Features
+
+We compute average activations across samples:
+
+- $v^+$: mean feature activations for desired behavior  
+- $v^-$: mean feature activations for opposite behavior  
+
+To ensure robustness, we apply a threshold $\tau$ and keep only features that appear consistently across many examples, i.e., features for which the fraction of samples with non-zero activation exceeds $\tau$.
+
+
+##### Step 4: Isolating Behavior-Specific Features
+
+In this step, we filter out noise by removing features that appear in both $v^+$ and $v^-$ (e.g., shared syntax or formatting), setting them to zero so that only features specific to the desired and opposing behaviors remain.
+
+
+##### Step 5: Building the Concept Vector
+
+The final steering vector is defined as:
+
+$$
+v_{(b,\ell)} = v^+_{(b,\ell)} - v^-_{(b,\ell)}
+$$
+
+**Intuition:**
+- $v^+$ captures what we want to **encourage**
+- $v^-$ captures what we want to **suppress**
+
+Their difference produces a direction that cleanly represents the target behavior.
+
+##### Step 6: Steering the Model During Generation
+
+At inference time, we modify the model’s activations at layer $\ell$:
+
+$$
+\tilde{a}^t_\ell = \hat{a}^t_\ell \left( \sigma \big( f(a^t_\ell) + \lambda \cdot v_{(b,\ell)} \big) \right) + \Delta
+$$
+
+**Key Components**
+
+- **$\lambda$ (steering strength):**  
+  Controls intensity  
+  - $\lambda > 0$: amplifies the behavior  
+  - $\lambda < 0$: suppresses it  
+
+- **$\sigma$ (non-linearity):**  
+  Ensures the modified representation remains valid in the sparse (non-negative) space  
+
+- **$\Delta$ (correction term):**  
+  Compensates for reconstruction error introduced by the sparse encoding, preserving model quality  
+
+#### Results and Key Takeaways
+
+Sparse Activation Steering demonstrates that operating in a high-dimensional sparse space enables **clean isolation of individual behavioral features**, which can then be **combined compositionally** to control multiple traits independently without interference. The method scales well: increasing the dimensionality (larger SAE dictionaries) improves **feature disentanglement**, leading to more precise and interpretable control signals. Importantly, the most effective steering occurs in **intermediate layers**, where abstract behavioral representations emerge, rather than in early layers. Empirically, SAS achieves reliable, bidirectional behavior control, transfers across model variants, and maintains (or even improves) benchmark performance, suggesting that sparse representations provide a practical and robust foundation for fine-grained, modular alignment of LLMs.
+
+
 ### S&PTopK
+
+### Rethinking Sparse Autoencoders: Select-and-Project for Fairness and Control from Encoder Features Alone
+
+### [Link]
+[OpenReview: Rethinking Sparse Autoencoders: Select-and-Project for Fairness and Control from Encoder Features Alone](https://openreview.net/forum?id=UjHe8F48eE)
+
+### [Theory]
+**Introduction:**
+The proposed method leverages the encoder of a Sparse Autoencoder (SAE) to isolate and control specific concepts in the latent space, treating the SAE encoder weights similarly to Concept Activation Vectors (CAVs) acting as attribute detectors. The mechanism works in the following steps:
+1. **Feature Selection:** After mapping to a sparser space via the encoder, the model selects the top k most important hidden features related to the target concept. This selection is done in one of three ways, two of which are:
+   * Calculating the correlation between each hidden feature and its CLIP score, then ranking them by the highest correlation.
+   * Training a logistic regression model on the SAE features to predict the concept, and selecting the features with the highest absolute weights.
+2. **Aggregation (Optional):** Aggregating the k most informative features.
+3. **Orthogonal Projection:** Based on the selected features (forming matrix A), an orthogonal projection is calculated using the formula: 
+   V = I - αA(A^TA)^-1A^T
+   The parameter α controls the balance between preserving the model's overall utility and the strength of control over the specific attribute.
+4. **Application:** The resulting matrix V is applied to the input of the encoder.
+
+**Why the authors claim it is better:**
+The authors argue their solution is superior because it operates directly on encoder features rather than decoder reconstructions. It functions as a projection in the original embedding space rather than overwriting embeddings as a sum of decoder weights. This ensures the method remains faithful to the model's initial representations, thereby maintaining the model's general utility and achieving higher performance in other domains.
+
+### [Downstream tasks]
+* **Gender Bias Analysis:** Using hair color as a downstream classification task to analyze and mitigate gender bias.
+* **Toxicity Reduction:** Evaluating the model's ability to generate text with reduced aggression. This was evaluated using an LLM-as-a-judge, comparing a standard baseline model, previous SAE-based approaches, and the proposed approach (S&P Top-K) which uses modified activations.
+
+### [Datasets]
+* **CelebA**
+* **FairFace**
+* **Custom LLM-generated data** (used specifically for the toxic/aggressive opinion generation task).
+
+### [Related literature]
+Extensive related literature building upon this specific CAV method is difficult to provide, as the paper is quite recent and was actually rejected from an A* conference, but it was accepted for Neurips workshop.
+
+The lack of adoption and the rejection stem from the following reviewer critiques, which highlight current gaps in this method's theoretical and practical standing:
+* **Lack of novelty:** Orthogonal projection is a widely used technique, and the paper failed to position itself well against existing, established methods.
+* **Poor interpretability:** The paper lacked visualizations that would help explain how the top k features from the sparse encoder actually contribute to semantic concepts.
+* **Weak theoretical foundations:** Reviewers noted that the procedure felt empirical (trial-and-error) rather than being grounded in solid theory.
+* **Evaluation flaws:** The evaluation lacked proper calibration and enhancement of the baseline methods it was compared against, particularly in the LLM-as-a-judge context.
 
 ### SAE PRobe
