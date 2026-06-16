@@ -49,6 +49,42 @@ Residual connections from ResNet were adopted by many subsequent architectures -
 - [**microsoft/resnet-152**](https://huggingface.co/microsoft/resnet-152) - 152-layer ResNet v1.5 architecture, trained just like the resnet-50 (above);
 - [**timm/resnet50.a1_in1k**](https://huggingface.co/timm/resnet50.a1_in1k) - the same 50-layer ResNet v1.5 architecture, but with different training based on [*ResNet Strikes Back*](https://openreview.net/forum?id=NG6MJnVl6M5), Wightman et al., 2021 (more epochs, more advanced data augmentation and other improvements). Has higher accuracy on ImageNet than basic version.
 
+### Vision Transformer (ViT)
+
+#### Original paper
+
+[**An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale**](https://arxiv.org/pdf/2010.11929), Alexey Dosovitskiy, Lucas Beyer, Alexander Kolesnikov, Dirk Weissenborn, Xiaohua Zhai, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer, Georg Heigold, Sylvain Gelly, Jakob Uszkoreit, Neil Houlsby (2020)
+
+#### Performance
+
+When pre-trained on large amounts of data (14M-300M images), ViT achieves an accuracy similar or higher than CNNs such as ResNet; in particular, the best model reaches the accuracy of 88.55% on ImageNet, 90.72% on ImageNet-ReaL, 94.55% on CIFAR-100, and 77.63% on the VTAB suite of 19 tasks. When trained just on the medium-sized datasets (e.g. ImageNet), it achieves accuracies that are just a few percentage points lower than ResNets on comparable size. Additionally, the pre-training of ViTs on large datasets requires significantly less computational resources - up to **4 times less computational resources** than with CNNs (e.g. BiT, which is a ResNet-based model).
+
+#### Novelty
+
+ViT proposes an entirely new architecture for computer vision models. Before ViT, the standard for vision models were CNNs, which have image-specific **inductive biases** (built-in architectural assumptions about how images generally work, which help the model learn faster):
+1. **Locality:** Pixels close to each other are more related.
+2. **Translation invariance:** An object is considered the same regardless of where in the image it is placed.
+
+ViT doesn't have any such image-specific inductive biases; instead, it uses a pure **Transformer** architecture that was originally designed for NLP tasks:
+- The image is divided into a grid of fixed-size patches (e.g., 16x16 pixels).
+- These patches are flattened and linearly projected into 1D embeddings. 
+- Additionally, positional embeddings are added so that the model has information about which patches correspond to which parts of the original image.
+- This understanding of the original images is later used in a Transformer architecture, using mechanisms of self-attention that allow it to infer connections between separate tokens (patches). 
+
+This makes the models consider images in a more global sense, instead of focusing only on the connections and patterns found in neighbouring pixels - it means ViT can easily link parts of an image that are far away from each other. 
+
+#### Related Literature (Known Issues)
+
+- **Touvron et al. (2021)** - [*Training data-efficient image transformers & distillation through attention*](https://arxiv.org/pdf/2012.12877) - ViTs require a massive amount of training data due to the afore-mentioned lack of inductive biases that CNNs have, meaning that they need to be pre-trained on huge datasets in order to learn how to process images. The authors of this paper introduced DeiT (Data-efficient Image Transformers) which are based on ViT architecture, implement some modifications (e.g. data augmentation or using CNNs as 'teachers' in order to make the ViT training process faster) and can effectively be trained on ImageNet-1K from scratch. 
+- **Paul and Chen (2022)** - [*Vision Transformers are Robust Learners*](https://arxiv.org/pdf/2105.07581) - shows how ViTs are generally more robust than CNNs (ie. perform better than CNNs on corrupted images or images with unusual backgrounds, which CNNs are likely to misclassify). 
+- **Naseer et al. (2021)** - [*Intriguing Properties of Vision Transformers*](https://arxiv.org/pdf/2105.10497) - Shows that when presented with texture and shape of the same object, while CNNs often make decisions based on texture, ViTs perform better than CNNs and comparable to humans on shape recognition, which means they are better for e.g. recognizing object shapes in less textured data such as paintings. Hence, their output also changes less after patch-level spatial permutations or common natural corruptions (e.g., noise, blur, contrast and pixelation artefacts). However, they are still vulnerable to adversarial attacks and some image corruptions. 
+
+#### Trained Instances
+
+- [**google/vit-base-patch16-224**](https://huggingface.co/google/vit-base-patch16-224) - The base ViT architecture (86M parameters) using 16x16 patch resolution, pre-trained on ImageNet-21k (14 million images) and fine-tuned on ImageNet-1K at 224x224 resolution.
+- [**google/vit-large-patch16-224**](https://huggingface.co/google/vit-large-patch16-224) - The large ViT variant (304M parameters) using 16x16 patches, pre-trained on ImageNet-21k and fine-tuned on ImageNet-1K.
+- [**facebook/deit-base-patch16-224**](https://huggingface.co/facebook/deit-base-patch16-224) - a base-sized version of DeIT (Data-efficient Image Transformer), which is a more efficiently trained Vision Transformer (ViT); pre-trained on ImageNet-1k. 
+
 ### ConvNext
 
 ### EfficientNet
