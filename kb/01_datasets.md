@@ -273,9 +273,95 @@ The 2017 challenge was structured into three distinct tasks, designed to mimic a
 1. [Skin Lesion Analysis Toward Melanoma Detection: A Challenge at the 2017 ISBI](https://arxiv.org/abs/1710.05006) - The official ISIC 2017 summary detailing the dataset setup, the three clinical tasks, and an analysis of top-performing algorithms.
 2. [RECOD Titans at ISIC Challenge 2017](https://arxiv.org/abs/1703.04819) - A top-performing team's breakdown on using transfer learning and specific data augmentation to overcome the small 2,000-image dataset constraint.
 3. [Skin Lesion Classification Using Deep Multi-scale Convolutional Neural Networks](https://arxiv.org/abs/1703.01402) - A highly cited approach using a multi-scale Inception-v3 network to successfully mimic how a dermatologist zooms in and out to analyze lesions.
+
 ### ImageNet + WordNet
 
 *Note: When used like in [this paper](https://arxiv.org/pdf/2602.11448)*
+
+
+### Different versions of ImageNet that are interesting for our course
+
+#### tieredImageNet-H
+- **Paper** [META-LEARNING FOR SEMI-SUPERVISED FEW-SHOT CLASSIFICATION](https://arxiv.org/abs/1803.00676)
+- **Impact** 1992 citation as for 12.04.2026, Published as a conference paper at ICLR 2018
+- **Dataset** [tiered-imagenet-tools](https://github.com/yaoyao-liu/tiered-imagenet-tools) [Not confirmed kaggle link](https://www.kaggle.com/datasets/arjun2000ashok/tieredimagenet)
+- **Short Description** A reorganization of the ImageNet hierarchy (ILSVRC-12) designed to create a more rigorous and realistic meta-learning environment by ensuring the training, validation, and testing sets are semantically disjoint. It groups the 608 leaf classes into 34 high-level nodes (e.g., mammal, tool) and partitions these nodes near the root of the hierarchy tree, meaning the test-time classes are fundamentally different from those seen during training. The "H" variant extends this logic to a deep 12-level hierarchy specifically optimized for evaluating "Mistake Severity" (MS) and ensuring hierarchical consistency in model predictions.
+- **Metrics** 608 classes, 779,165 images, and a 12-level deep hierarchy tree. Default image resolution is 84×84 pixels.
+- **Concepts** 34 high-level semantic nodes (e.g., "mammal," "tool," "appliance") that partition the 608 leaf classes. Concepts are defined by their taxonomic path from the root to the leaf.
+- **Relevance** Useful for studying "Mistake Severity" and hierarchical consistency; models can be evaluated on whether their predictions follow logical semantic paths across 12 levels of granularity.
+
+- **Related Literature** 
+
+- - [Meta-Transfer Learning for Few-Shot Learning](https://openaccess.thecvf.com/content_CVPR_2019/html/Sun_Meta-Transfer_Learning_for_Few-Shot_Learning_CVPR_2019_paper.html) This paper is directly related to dataset. 1749 citations as of 12.04.2026, Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR), 2019
+
+- - [Making Better Mistakes](https://openaccess.thecvf.com/content_CVPR_2020/html/Bertinetto_Making_Better_Mistakes_Leveraging_Class_Hierarchies_With_Deep_Networks_CVPR_2020_paper.html) (ECCV 2020): Introduces hierarchical losses to penalize errors that are semantically distant in the hierarchy.
+
+#### ImageNet-Free (ImageNet-F) (also known as ImageNet-3L)
+- **Paper** [Free-Grained Hierarchical Visual Recognition](https://arxiv.org/abs/2510.14737) 
+- **Impact** 1 citation as of 12.04.2026, published on October 2025, current version on 08.04.2026, Accepted to CVPR 2026
+- **Dataset** not published yet, here is the repo [ImageNet-3L](https://github.com/pseulki/FreeGrainLearning)
+- **Short Description** A restructured version of ImageNet-1K that introduces a consistent three-level taxonomy (basic, subordinate, and fine-grained) to address the "noisy" nature of the original WordNet hierarchy. It focuses on the problem of "free-grained" recognition, where training labels can appear at any taxonomic depth depending on visual clarity (e.g., a distant object labeled only as "bird" vs. a close-up labeled as "bald eagle"). The dataset removes overly abstract nodes (like "Entity") to ensure every branch supports meaningful multi-level prediction and visual grounding across different scales of detail.
+- **Metrics** 1,000 classes organized into 20 basic (coarse), 127 subordinate (mid), and 505 fine-grained classes.
+- **Concepts** 3 levels of granularity defined by visual cues: global features (coarse), part-based features (mid), and local details (fine).
+- **Relevance** Focuses on "free-grain" training where labels may appear at any taxonomy level; relevant for learning consistent concepts from incomplete or mixed-granularity labels.
+- **Related Literature:** 
+
+- - [H-CAST](https://openreview.net/forum?id=7HEMpBTb3R) (2024): Introduces a hierarchical consistency loss that aligns visual features across depths to improve classification and internal image segmentation.
+
+
+#### ImageNet-21K-P
+- **Paper** [ImageNet-21K Pretraining for the Masses](https://arxiv.org/abs/2104.10972)
+- **Impact** 1092 citations as of 12.04.2026, Accepted to NeurIPS 2021 (Datasets and Benchmarks Track)
+- **Dataset** [ImageNet-21K-P](https://github.com/Alibaba-MIIL/ImageNet21K)
+- **Short Description** A cleaned and democratized version of the full original 21,841-class ImageNet collection. The pre-processing pipeline removes infrequent classes (fewer than 500 images), resulting in a more balanced set of 11,221 classes, and utilizes recursive WordNet parenthood to transform single labels into semantic multi-labels (e.g., "swan" inherits "bird," "vertebrate," and "animal"). To improve accessibility, images are "squish-resized" to 224×224 pixels, reducing the storage footprint from 1.3TB to a manageable 250GB, while significantly improving downstream performance on a wide variety of architectures.
+- **Metrics** 14,197,122 images across 11,221 cleaned classes (down from 21,841 original classes); images are squish-resized to 224×224 pixels to reduce storage to 250GB.
+- **Concepts** Recursive semantic lineage; images are associated with their original label and all its ancestors (e.g., "swan" inherits "animal").
+- **Relevance** Allows training "Concept-based Interpretable Models" with ground truth at every level of abstraction; utilizes "Semantic Softmax" to exploit hierarchical structures.
+- **Related Literature:** 
+
+- - [An Image is Worth 16x16 Words](https://arxiv.org/abs/2010.11929) (ICLR 2021): Validates that large-scale architectures like ViT benefit significantly from the conceptual diversity of the 21K collection.
+
+- - [Hierarchical Graphical Knowledge Representation](https://link.springer.com/chapter/10.1007/978-3-031-20044-1_7) (ECCV 2022): Proposes HGR-Net to scales zero-shot learning to tens of thousands of categories using class inheritance relations.
+
+
+#### BREEDS Benchmarks
+- **Paper** [BREEDS: Benchmarks for Subpopulation Shift](https://arxiv.org/abs/2008.04859)
+- **Impact** 236 citations as of 12.04.2026, Published at the International Conference on Learning Representations (ICLR) 2021
+- **Dataset** [BREEDS-Benchmarks](https://github.com/MadryLab/BREEDS-Benchmarks)
+- **Short Description** A benchmark suite designed to evaluate model robustness to distribution shifts by repurposing ImageNet classes into "superclasses" and "subpopulations". By splitting the original classes into disjoint source and target sets, it simulates realistic shifts; for example, a model might be trained on specific breeds of dogs like "Poodles" and "Terriers" but must recognize "Dalmatians" during testing. This methodology enables the assessment of whether a model has truly grasped the invariant "core concept" (e.g., "dog-ness") or is merely memorizing shortcut features unique to its training subpopulations.
+- **Metrics** Includes ENTITY-13 (13 superclasses, 20 subpopulations each), ENTITY-30 (30 superclasses, 8 subs each), LIVING-17 (17 superclasses, 4 subs each), and NON-LIVING-26 (26 superclasses, 4 subs each).
+- **Concepts** Invariant semantic "superclasses" (e.g., "dog") that must be recognized across novel, unseen "subpopulations" (e.g., "Dalmatian" vs. "Poodle").
+- **Relevance** Critical for distinguishing "concept understanding" from "label memorization"; probes whether models learn the core features of a concept regardless of specific subpopulation shifts.
+- **Related Literature:**
+
+- - [In Search of Lost Domain Generalization](https://arxiv.org/abs/2007.01434) (ICLR 2021): Evaluates domain adaptation methods on BREEDS, finding many fail to outperform simple baselines.
+
+
+#### ImageNet-X
+- **Paper** [ImageNet-X: Understanding Model Mistakes with Factor of Variation Annotations](https://arxiv.org/abs/2211.01866)
+- **Impact** Over 62 citations as of 2026; used for "model debugging".
+- **Dataset** [ImageNet-X](https://github.com/facebookresearch/imagenetx)
+- **Short Description** A set of diagnostic human annotations for the entire ImageNet validation set and a subset of training data, pinpointing the specific "factors of variation" that lead to model failures. Each image is contrasted against "prototypical" high-confidence examples to identify attributes like object pose, background complexity, lighting, and various forms of occlusion (e.g., object blocked by a person). By isolating these environmental and geometric factors, researchers can determine whether a model's concept detection is truly invariant to realistic scene variations or dependent on spurious correlations.
+- **Metrics** 50,000 images in the validation set plus a random 12,000-image training subset, each annotated with up to 16 factors.
+- **Concepts** 16 human-interpretable factors: pose, background, lighting, size, color, texture, shape, occlusion (person/object), partial view, and co-occurrences.
+- **Relevance** Directly aligns with concept detection tasks by identifying whether a model's "concept" of an object is invariant to geometric or environmental factors.
+
+
+#### Tiny ImageNet
+- **Dataset** [Tiny ImageNet, kaggle mirror](https://www.kaggle.com/c/tiny-imagenet), Subset of ILSVRC-2010, introduces as part of the CS231n: Convolutional Neural Networks for Visual Recognition course.
+- **Short Description** A scaled-down, computationally efficient subset of ImageNet (ILSVRC-2010) featuring 200 object categories with lower-resolution (64×64 pixels) images. It provides a manageable testbed for exploring the relationship between visual texturing and classification accuracy, and it is widely used to prototype "Hierarchical Deep CNNs" (HD-CNNs) that separate "easy" coarse classes (like animals vs. vehicles) before employing expert fine-grained classifiers. The dataset is particularly useful for students to investigate how hyperparameters like receptive field size impact accuracy when visual information is limited.
+- **Metrics** 200 classes, 120,000 labeled images downsampled to 64×64 pixels. Each class has 500 train, 50 val, and 50 test images.
+- **Concepts** WordNet hierarchy synsets; often adapted to two-level "coarse-to-fine" conceptual structures.
+- **Relevance** Sandbox for testing "Hierarchical Deep CNNs" (HD-CNNs) that separate easy coarse classes (e.g., vehicle vs. animal) before using expert classifiers for fine-grained distinction.
+- **Related Literature** 
+
+- - [Tiny ImageNet Challenge](https://cs231n.stanford.edu/reports/2017/pdfs/930.pdf) (2017) Benchmarks more modern architectures like Inception-ResNet and DenseNet on the $64 \times 64$ resolution images, showing that although filter distributions change significantly, these models still struggle with ambiguous subject placement in "Tiny" frames.
+
+- - [Tiny ImageNet Visual Recognition Challenge](https://cs231n.stanford.edu/reports/2015/pdfs/yle_project.pdf) (2015) Investigates the impact of hyperparameters like receptive field size and dropout layers on classification accuracy, identifying that model performance is highly sensitive to texturing and specific geometric properties.
+
+- - [Tiny ImageNet Classification with Convolutional Neural Networks](https://cs231n.stanford.edu/reports/2015/pdfs/leonyao_final.pdf) (2015) This report details a deep CNN architecture with 5 convolutional layers using $3 \times 3$ filters, demonstrating that an ensemble of three such networks can achieve a 56.7% test set error rate on the 200-class subset.
+
+
 
 ### ImageNet - content
 
